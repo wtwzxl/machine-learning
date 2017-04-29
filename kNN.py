@@ -57,6 +57,9 @@ def file2matrix(filename):
 		line = line.strip() # delelte the whitespace
 		listFromLine = line.split('\t')
 		returnMat[index,:] = listFromLine[0:3]
+		print(".......")
+		print(returnMat[index,:])
+		print(".......")
 		if(listFromLine[-1].isdigit()):
 			classLabelVector.append(int(listFromLine[-1]))
 		else:
@@ -154,7 +157,7 @@ group,labels = createDataSet()
 #message =classify0([7,1],group,labels,3)
 #print(message)
 '''
-datingDataMat, datingLabels = file2matrix("datingTestSet.txt")
+
 #print(datingDataMat)
 #print(datingLabels)
 
@@ -169,6 +172,7 @@ ax.scatter(datingDataMat[:,1],datingDataMat[:,2],
 normMat, ranges,minVals = autoNorm(datingDataMat)
 datingClassTest()
 '''
+datingDataMat, datingLabels = file2matrix("datingTestSet.txt")
 #classifyPerson()
 #handwritingClassTest()
 
