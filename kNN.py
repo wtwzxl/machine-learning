@@ -14,7 +14,6 @@ def classify0 (intX,dataSet,labels,k):
 	# array.shape[0] return matrix rows,
 	# array.shape[1] return matrix columns
 	dataSetSize =dataSet.shape[0] 
-	print("dataSetSize " + str(dataSetSize))
 	#tile(A,(m,n)) create array[m][n] by A elements
 	diffMat = tile(intX,(dataSetSize,1))-dataSet
 	print(diffMat)
@@ -23,14 +22,11 @@ def classify0 (intX,dataSet,labels,k):
 	# axis =1 indicates add according to rows
 	#axis = 0 indicates add according to columms
 	sqDistances = sqDiffMat.sum(axis = 1)
-	print(sqDistances)
 	distances = sqDistances**0.5 #  equal sqrt()
 	# argsort() is numpy function, can get every element sorted number in matrix
 	sortedDistIndicies = distances.argsort()
-	print(sortedDistIndicies)
 	classCount = {}
 	for i in range(k):
-		print(" i = "+ str(i) + "  "+str(sortedDistIndicies[i]))
 		voteIlabel = labels[sortedDistIndicies[i]]
 		#dict.get(key,v) if it doesn't contains key ,return 0
 		classCount[voteIlabel] =classCount.get(voteIlabel,0) + 1
@@ -47,7 +43,6 @@ def file2matrix(filename):
 	# return file lines
 	arrayOLines = fr.readlines()
 	numberOfLines = len(arrayOLines) #get the number of lines in the file
-	print("numberOfLines  " + str(numberOfLines))
 	#zeros(shape,dtype = float,order = 'c')
 	# create the special type array
 	returnMat = zeros((numberOfLines,3))  #prepare matrix to return
@@ -57,22 +52,19 @@ def file2matrix(filename):
 		line = line.strip() # delelte the whitespace
 		listFromLine = line.split('\t')
 		returnMat[index,:] = listFromLine[0:3]
-		print(".......")
-		print(returnMat[index,:])
-		print(".......")
 		if(listFromLine[-1].isdigit()):
 			classLabelVector.append(int(listFromLine[-1]))
 		else:
 			classLabelVector.append(love_dictionary.get(listFromLine[-1]))	
-		index += 1
+		index += 1  #每循环一次index都加1
 	return returnMat,classLabelVector		
 
 def autoNorm(dataSet):
-	minVals = dataSet.min(0)
+	minVals = dataSet.min(0)# 返回每列的最值
 	maxVals = dataSet.max(0)
 	ranges = maxVals - minVals
 	#shape：可以是int类型数据，或者是int类型的序列。表示新的数组的大小
-	normDataSet = zeros(shape(dataSet))
+	normDataSet = zeros(shape(dataSet)) #创建[row][column]矩阵
 	m = dataSet.shape[0]	
 	normDataSet = dataSet-tile(minVals,(m,1))
 	normDataSet = normDataSet/tile(ranges,(m,1))
@@ -130,22 +122,23 @@ def handwritingClassTest():
 		classNumStr = int(fileStr.split("_")[0])
 		hwLabels.append(classNumStr)
 		trainingMat[i,:] = img2vector("trainingDigits/%s"% fileNameStr)
-		testFileList = listdir('testDigits')
-		errorCount = 0.0
-		mTest =len(testFileList)
-		for i in range(mTest):
-			fileNameStr = testFileList[i]
-			fileStr = fileNameStr.split(".")[0]
-			classNumStr = int(fileStr.split("_")[0])
-			vectorUnderTest = img2vector('testDigits/%s' %fileNameStr)
-			classifierResult = classify0(vectorUnderTest,trainingMat,
-			hwLabels,3)
+	testFileList = listdir('testDigits')
+	errorCount = 0.0
+	mTest =len(testFileList)
+	for i in range(mTest):
+		fileNameStr = testFileList[i]
+		fileStr = fileNameStr.split(".")[0]
+		classNumStr = int(fileStr.split("_")[0])
+		vectorUnderTest = img2vector('testDigits/%s' %fileNameStr)
+		classifierResult = classify0(vectorUnderTest,trainingMat,
+		hwLabels,3) #这里报溢出  classify0
 		print("the classifier came back with: %d, the real answer is %d"\
 		%(classifierResult,classNumStr))	
 		if(classifierResult != classNumStr):
 			errorCount += 1.0
-		print('the total error rate is: %f'%(errorCount/float(mTest)))	
-			
+	print("\nthe total number of errors is: %d" % errorCount)
+	print('the total error rate is: %f'%(errorCount/float(mTest)))	
+		
 	
 '''
 group,labels = createDataSet()	
@@ -172,9 +165,11 @@ ax.scatter(datingDataMat[:,1],datingDataMat[:,2],
 normMat, ranges,minVals = autoNorm(datingDataMat)
 datingClassTest()
 '''
-datingDataMat, datingLabels = file2matrix("datingTestSet.txt")
+#datingDataMat, datingLabels = file2matrix("datingTestSet.txt")
+#print(datingDataMat)
+#datingClassTest()
 #classifyPerson()
-#handwritingClassTest()
+handwritingClassTest()
 
 
 
